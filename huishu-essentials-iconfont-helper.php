@@ -55,6 +55,13 @@ function hu_ep_ih_get_all_icons(){
 	return get_option('hu_ep_ih_glyphnames',array());
 }
 
+function hu_ep_ih_register_iconfont_style(){
+    if($csspath = hu_ep_ih_get_css_file_url()){
+        wp_register_style('hu-ep-ih-iconfont-style',$csspath,array(),get_option('hu_ep_ih_glyphnames_time',123));
+    }
+}
+add_action('init','hu_ep_ih_register_iconfont_style');
+
 /**
  * Create Settings Page
  */
@@ -79,7 +86,8 @@ function hu_ep_ih_settings_page(){
 	}
 	if($_POST['glyph_getter_submit'] == 'Speichern'){
 		$names = $_POST['hu_ep_ih_glyphnames'];
-		update_option('hu_ep_ih_glyphnames',$names);
+        update_option('hu_ep_ih_glyphnames',$names);
+        update_option('hu_ep_ih_glyphnames_time',time());
 		$glyphs = $names;
 	}
 	if(count($glyphs)>0){
