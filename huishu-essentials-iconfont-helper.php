@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
