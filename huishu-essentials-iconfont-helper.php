@@ -107,7 +107,7 @@ function hu_ep_ih_settings_page(){
 				}
 			?>
 			<input type="submit" name="glyph_getter_submit" value="Speichern" /><br /><br />
-            <input type="submit" name="glyph_getter_submit" value="Neu Einlesen" />
+            <input type="submit" name="glyph_getter_submit" value="Einlesen" />
 		</form>
 		<?php
 	} else {
