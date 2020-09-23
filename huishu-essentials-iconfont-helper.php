@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.5
+ * Version:           1.0.6
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
@@ -97,18 +97,20 @@ function hu_ep_ih_settings_page(){
 	if($path){
 		echo '<strong>Gespeicherte SVG-Datei:'.$path.'</strong>';
 		?>
-		<form method="post">
-			<?php
-				foreach($glyphs as $icon => $name){
-					?>
-					<label for="hu_ep_ih_glyphnames[<?php echo $icon ?>]">Beschriftung für Icon <?php echo $icon; ?></label>
-					<input type="text" name="hu_ep_ih_glyphnames[<?php echo $icon ?>]" value="<?php echo esc_attr($name); ?>" /><br />
-					<?php
-				}
-			?>
-			<input type="submit" name="glyph_getter_submit" value="Speichern" /><br /><br />
-            <input type="submit" name="glyph_getter_submit" value="Einlesen" />
-		</form>
+        <div class="wrap">
+            <form method="post">
+                <?php
+                    foreach($glyphs as $icon => $name){
+                        ?>
+                        <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>]">Beschriftung für Icon <?php echo $icon; ?></label>
+                        <input type="text" name="hu_ep_ih_glyphnames[<?php echo $icon ?>]" value="<?php echo esc_attr($name); ?>" /><br />
+                        <?php
+                    }
+                ?>
+                <input type="submit" name="glyph_getter_submit" value="Speichern" /><br /><br />
+                <input type="submit" name="glyph_getter_submit" value="Einlesen" />
+            </form>
+        </div>
 		<?php
 	} else {
 		echo '<p>Bitte stellen Sie zunächst den Pfad zur SVG-Font-Datei ein.</p>';

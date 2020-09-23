@@ -3,6 +3,8 @@
         "settings_page_hu_ep_ih_ic_ermitteln"
     ],
     "options": {
-        "hu_ep_ih_glyphnames": {}
+        "hu_ep_ih_glyphnames": {
+            "wpm_each": {} 
+        }
     }
 }
