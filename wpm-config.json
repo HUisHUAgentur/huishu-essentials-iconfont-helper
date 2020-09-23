@@ -1,10 +1,10 @@
 {
     "admin_pages": [
-        "settings_page_hu_ep_ih_ic_ermitteln"
+        "settings_page_hu_ep_ih_settings_page"
     ],
     "options": {
         "hu_ep_ih_glyphnames": {
             "wpm_each": {} 
         }
-    } 
+    }
 }
