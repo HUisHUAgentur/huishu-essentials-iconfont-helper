@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.6
+ * Version:           1.0.7
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
@@ -164,7 +164,7 @@ function hu_ep_ih_get_css_file_url(){
         }
         // Fallback to get_option if CMB2 is not loaded yet.
         $opts = get_option( $options_name, array() );
-        $val = $default;
+        $val = "";
         if ( is_array( $opts ) && array_key_exists( 'hu_ep_ih_css_file_url', $opts ) && false !== $opts[ 'hu_ep_ih_css_file_url' ] ) {
             $val = $opts[ 'hu_ep_ih_css_file_url'];
         }
