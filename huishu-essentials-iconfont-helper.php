@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.7
+ * Version:           1.0.8
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
@@ -62,6 +62,14 @@ function hu_ep_ih_register_iconfont_style(){
 }
 add_action('init','hu_ep_ih_register_iconfont_style');
 
+function hu_ep_ih_enqueue_admin_style( $hook ) {
+    if ( 'settings_page_hu_ep_ih_ic_ermitteln' != $hook ) {
+        return;
+    }
+    wp_enqueue_style( 'hu-ep-ih-iconfont-style');
+}
+add_action( 'admin_enqueue_scripts', 'hu_ep_ih_enqueue_admin_style' );
+
 /**
  * Create Settings Page
  */
@@ -102,7 +110,7 @@ function hu_ep_ih_settings_page(){
                 <?php
                     foreach($glyphs as $icon => $name){
                         ?>
-                        <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>]">Beschriftung für Icon <?php echo $icon; ?></label>
+                        <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>]">Beschriftung für Icon <?php echo $icon; ?> (<i class="icon-<?php echo $icon; ?>"></i>) </label>
                         <input type="text" name="hu_ep_ih_glyphnames[<?php echo $icon ?>]" value="<?php echo esc_attr($name); ?>" /><br />
                         <?php
                     }
