@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.8
+ * Version:           1.0.9
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
@@ -51,8 +51,20 @@ function hu_ep_ih_register_menu_page(){
 /**
  * Helper function to get all icons
  */
-function hu_ep_ih_get_all_icons(){
-	return get_option('hu_ep_ih_glyphnames',array());
+function hu_ep_ih_get_all_icons($type = 'label'){
+	$options = get_option('hu_ep_ih_glyphnames',array());
+    $return = array();
+    foreach($options as $icon => $name){
+        if(is_array($name) && isset($name[$type])){
+            $return[$icon] = $name[$type];
+        } elseif(is_array($name) && isset($name['label'])){
+            $return[$icon] = $name['label'];
+        } elseif(!is_array($name)){
+            $return[$icon] = $name;
+        }
+    }
+    return $return;
+    //return get_option('hu_ep_ih_glyphnames',array());
 }
 
 function hu_ep_ih_register_iconfont_style(){
@@ -109,10 +121,21 @@ function hu_ep_ih_settings_page(){
             <form method="post">
                 <?php
                     foreach($glyphs as $icon => $name){
-                        ?>
-                        <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>]">Beschriftung für Icon <?php echo $icon; ?> (<i class="icon-<?php echo $icon; ?>"></i>) </label>
-                        <input type="text" name="hu_ep_ih_glyphnames[<?php echo $icon ?>]" value="<?php echo esc_attr($name); ?>" /><br />
-                        <?php
+                        $fields_to_save = apply_filters('hu_ep_ih_icon_fields_to_save',array('label' => 'Beschriftung für Icon '.$icon.' (<i class="icon-'.$icon.'"></i>)'),$icon,$name);
+                        foreach($fields_to_save as $fieldname => $field_description){
+                            $value = $name;
+                            if(count($fields_to_save) > 1){
+                                if(is_array($value) && isset($value[$fieldname])){
+                                    $value = $value[$fieldname];
+                                } elseif(is_array($value)){
+                                    $value = "";
+                                }
+                            }
+                            ?>
+                            <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>][<?php echo $fieldname; ?>]"><?php echo $field_description; ?></label>
+                            <input type="text" name="hu_ep_ih_glyphnames[<?php echo $icon ?>][<?php echo $fieldname; ?>]" value="<?php echo esc_attr($value); ?>" /><br />
+                            <?php
+                        }
                     }
                 ?>
                 <input type="submit" name="glyph_getter_submit" value="Speichern" /><br /><br />
@@ -151,7 +174,7 @@ function hu_ep_ih_get_font_file_path(){
         }
         // Fallback to get_option if CMB2 is not loaded yet.
         $opts = get_option( $options_name, array() );
-        $val = $default;
+        $val = array();
         if ( is_array( $opts ) && array_key_exists( 'hu_ep_ih_font_file_path', $opts ) && false !== $opts[ 'hu_ep_ih_font_file_path' ] ) {
             $val = $opts[ 'hu_ep_ih_font_file_path'];
         }
