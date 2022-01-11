@@ -32,7 +32,7 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
  * Add Settings to Wordpress Backend
  */
 function hu_ep_ih_register_settings_or_add_to_hu_framework(){
-    if(function_exists('hu_get_custom_theme_options_name')){
+    if(function_exists('hu_options_framework')){
         add_filter('huishu_framework_options_page_options','hu_ep_ih_add_settings_to_hu_framework');
     } else {
         add_filter( 'admin_init', 'hu_ep_ih_register_fields');
