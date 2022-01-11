@@ -33,7 +33,7 @@ $myUpdateChecker = Puc_v4_Factory::buildUpdateChecker(
  */
 function hu_ep_ih_register_settings_or_add_to_hu_framework(){
     if(function_exists('hu_options_framework')){
-        add_filter('huishu_framework_options_page_options','hu_ep_ih_add_settings_to_hu_framework');
+        add_filter('huishu_options_framework_main_page_fields','hu_ep_ih_add_settings_to_hu_framework');
     } else {
         add_filter( 'admin_init', 'hu_ep_ih_register_fields');
     }
@@ -64,8 +64,8 @@ function hu_ep_ih_get_all_icons($type = 'label'){
         }
     }
     return $return;
-    //return get_option('hu_ep_ih_glyphnames',array());
 }
+
 
 function hu_ep_ih_register_iconfont_style(){
     if($csspath = hu_ep_ih_get_css_file_url()){
@@ -121,7 +121,14 @@ function hu_ep_ih_settings_page(){
             <form method="post">
                 <?php
                     foreach($glyphs as $icon => $name){
-                        $fields_to_save = apply_filters('hu_ep_ih_icon_fields_to_save',array('label' => 'Beschriftung für Icon '.$icon.' (<i class="icon-'.$icon.'"></i>)'),$icon,$name);
+                        $fields_to_save = apply_filters(
+                            'hu_ep_ih_icon_fields_to_save',
+                            array( 
+                                'label' => 'Beschriftung für Icon '.$icon.' (<i class="icon-'.$icon.'"></i>)'
+                            ),
+                            $icon,
+                            $name
+                        );
                         foreach($fields_to_save as $fieldname => $field_description){
                             $value = $name;
                             if(count($fields_to_save) > 1){
@@ -166,19 +173,8 @@ function hu_ep_ih_read_glyphs($svgFile){
 }
 
 function hu_ep_ih_get_font_file_path(){
-    if(function_exists('hu_get_custom_theme_options_name')){
-        $options_name = hu_get_custom_theme_options_name();
-        if ( function_exists( 'cmb2_get_option' ) ) {
-            // Use cmb2_get_option as it passes through some key filters.
-            return cmb2_get_option( $options_name, 'hu_ep_ih_font_file_path', NULL );
-        }
-        // Fallback to get_option if CMB2 is not loaded yet.
-        $opts = get_option( $options_name, array() );
-        $val = array();
-        if ( is_array( $opts ) && array_key_exists( 'hu_ep_ih_font_file_path', $opts ) && false !== $opts[ 'hu_ep_ih_font_file_path' ] ) {
-            $val = $opts[ 'hu_ep_ih_font_file_path'];
-        }
-        return $val;
+    if(function_exists('hu_options_framework')){
+        return hu_options_framework()->get_main_option('hu_ep_ih_font_file_path',NULL);
     } else {
         $value = get_option( 'hu_ep_ih_font_file_path', '' );
         return $value;
@@ -187,19 +183,8 @@ function hu_ep_ih_get_font_file_path(){
 }
 
 function hu_ep_ih_get_css_file_url(){
-    if(function_exists('hu_get_custom_theme_options_name')){
-        $options_name = hu_get_custom_theme_options_name();
-        if ( function_exists( 'cmb2_get_option' ) ) {
-            // Use cmb2_get_option as it passes through some key filters.
-            return cmb2_get_option( $options_name, 'hu_ep_ih_css_file_url', NULL );
-        }
-        // Fallback to get_option if CMB2 is not loaded yet.
-        $opts = get_option( $options_name, array() );
-        $val = "";
-        if ( is_array( $opts ) && array_key_exists( 'hu_ep_ih_css_file_url', $opts ) && false !== $opts[ 'hu_ep_ih_css_file_url' ] ) {
-            $val = $opts[ 'hu_ep_ih_css_file_url'];
-        }
-        return $val;
+    if(function_exists('hu_options_framework')){
+        return hu_options_framework()->get_main_option('hu_ep_ih_css_file_url', NULL);
     } else {
         $value = get_option( 'hu_ep_ih_css_file_url', '' );
         return $value;
