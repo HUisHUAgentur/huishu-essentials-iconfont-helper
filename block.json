@@ -1,0 +1,27 @@
+{
+	"apiVersion": 2,
+	"name": "huishu/hu-icon-block",
+	"title": "Icon Block",
+	"icon": "star-filled",
+	"category": "widgets",
+	"attributes": {
+		"selectedIcon": {
+			"type": "string"
+		},
+		"url": {
+			"type": "string"
+		},
+		"targetblank": {
+			"type": "boolean"
+		}
+	},
+    "supports": {
+        "color": {
+            "text": true,
+            "background": false
+        }
+    },
+	"editorScript": "hu-ep-icon-block-script",
+	"style": "hu-ep-ih-iconfont-style",
+	"editorStyle": "file:./build/index.css"
+}

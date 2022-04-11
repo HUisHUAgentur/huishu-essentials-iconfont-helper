@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       HUisHU Essentials Plugins – Iconfont Helper
  * Description:       A Plugin to give needed functionality to other HUisHU Plugins and Themes
- * Version:           1.0.9
+ * Version:           2.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            HUisHU. Digitale Kreativagentur.
@@ -54,6 +54,9 @@ function hu_ep_ih_register_menu_page(){
 function hu_ep_ih_get_all_icons($type = 'label'){
 	$options = get_option('hu_ep_ih_glyphnames',array());
     $return = array();
+    if($type == 'all'){
+        return $options;       
+    }
     foreach($options as $icon => $name){
         if(is_array($name) && isset($name[$type])){
             $return[$icon] = $name[$type];
@@ -66,13 +69,17 @@ function hu_ep_ih_get_all_icons($type = 'label'){
     return $return;
 }
 
-
 function hu_ep_ih_register_iconfont_style(){
     if($csspath = hu_ep_ih_get_css_file_url()){
         wp_register_style('hu-ep-ih-iconfont-style',$csspath,array(),get_option('hu_ep_ih_glyphnames_time',123));
     }
 }
 add_action('init','hu_ep_ih_register_iconfont_style');
+
+function hu_ep_ih_enqueue_iconfont_in_frontend(){
+    wp_enqueue_style( 'hu-ep-ih-iconfont-style' );
+}
+add_action( 'wp_enqueue_scripts', 'hu_ep_ih_enqueue_iconfont_in_frontend' );
 
 function hu_ep_ih_enqueue_admin_style( $hook ) {
     if ( 'settings_page_hu_ep_ih_ic_ermitteln' != $hook ) {
@@ -87,7 +94,7 @@ add_action( 'admin_enqueue_scripts', 'hu_ep_ih_enqueue_admin_style' );
  */
 function hu_ep_ih_settings_page(){
 	$path = hu_ep_ih_get_font_file_path();
-	$glyphs = hu_ep_ih_get_all_icons();
+	$glyphs = hu_ep_ih_get_all_icons('all');
 	if( $_POST['glyph_getter_submit'] == 'Einlesen' ){
 		if(is_readable($path)){
 			$allglyphs = hu_ep_ih_read_glyphs($path);
@@ -131,12 +138,10 @@ function hu_ep_ih_settings_page(){
                         );
                         foreach($fields_to_save as $fieldname => $field_description){
                             $value = $name;
-                            if(count($fields_to_save) > 1){
-                                if(is_array($value) && isset($value[$fieldname])){
-                                    $value = $value[$fieldname];
-                                } elseif(is_array($value)){
-                                    $value = "";
-                                }
+                            if(is_array($value) && isset($value[$fieldname])){
+                                $value = $value[$fieldname];
+                            } elseif(is_array($value)){
+                                $value = "";
                             }
                             ?>
                             <label for="hu_ep_ih_glyphnames[<?php echo $icon ?>][<?php echo $fieldname; ?>]"><?php echo $field_description; ?></label>
@@ -242,4 +247,50 @@ function hu_ep_ih_css_file_url_html(){
 		$value = get_theme_file_uri();
 	}
 	echo '<input type="text" id="hu_ep_ih_css_file_url" name="hu_ep_ih_css_file_url" value="' . $value . '" />';
+}
+
+
+function hu_ep_ih_register_icon_block(){
+    $asset_file = include( plugin_dir_path( __FILE__ ) . 'build/index.asset.php');
+    wp_register_script( 'hu-ep-icon-block-script', plugin_dir_url( __FILE__ ).'build/index.js', $asset_file['dependencies'], $asset_file['version']);
+    $icons_for_block = array();
+    if($icons = hu_ep_ih_get_all_icons()){
+        $icons_for_block[] = array(
+            'label' => 'Kein Icon',
+            'value' => ''
+        );
+        foreach($icons as $key => $icon){
+            $icons_for_block[] = array(
+                'label' => $icon,
+                'value' => $key
+            );
+        }
+    }
+    wp_localize_script( 'hu-ep-icon-block-script', 'hu_ep_ih_icons', array( 'icons' => $icons_for_block ) );
+	register_block_type( __DIR__ );
+}
+add_action( 'init', 'hu_ep_ih_register_icon_block' );
+
+function hu_eb_ih_register_rest_route() {
+	register_rest_route('hu-iconhelper/v1', '/icons', [
+		'method'                => 'GET',
+		'callback'              => 'hu_eb_ih_get_icons_for_rest',
+        'permission_callback'   => '__return_true'
+	]);
+}
+add_action('rest_api_init', 'hu_eb_ih_register_rest_route');
+
+function hu_eb_ih_get_icons_for_rest(){
+    $icons = hu_ep_ih_get_all_icons();
+    $response_icons = array();
+    foreach($icons as $icon => $label){
+        $response_icons[] = array(
+            'value' => $icon,
+            'label' => $label
+        );
+    }
+    $response = rest_ensure_response(
+        $response_icons
+    );
+    return $response;
 }
