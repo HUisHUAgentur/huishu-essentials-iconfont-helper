@@ -80,7 +80,7 @@ function hu_ep_ih_get_all_icons($type = 'label'){
 }
 
 function hu_ep_ih_register_iconfont_style(){
-	if($csspath = hu_ep_ih_get_css_file_url()){
+	if( $csspath = hu_ep_ih_get_css_file_url() ){
 		wp_register_style('hu-ep-ih-iconfont-style', $csspath, array(), get_option('hu_ep_ih_glyphnames_time', 123));
 	}
 }
@@ -105,7 +105,7 @@ add_action( 'admin_enqueue_scripts', 'hu_ep_ih_enqueue_admin_style' );
 function hu_ep_ih_settings_page(){
 	$path = hu_ep_ih_get_font_file_path();
 	$glyphs = hu_ep_ih_get_all_icons('all');
-	if( $_POST['glyph_getter_submit'] == 'Einlesen' ){
+	if( isset($_POST['glyph_getter_submit']) && ($_POST['glyph_getter_submit'] == 'Einlesen' )){
 		if(is_readable($path)){
 			$allglyphs = hu_ep_ih_read_glyphs($path);
 			if(!count($allglyphs)){
@@ -122,7 +122,7 @@ function hu_ep_ih_settings_page(){
 			}
 		}
 	}
-	if( $_POST['glyph_getter_submit'] == 'Speichern' ){
+	if( isset($_POST['glyph_getter_submit']) && ($_POST['glyph_getter_submit'] == 'Speichern') ){
 		$names = $_POST['hu_ep_ih_glyphnames'];
 		update_option('hu_ep_ih_glyphnames', $names);
 		update_option('hu_ep_ih_glyphnames_time', time());
@@ -173,7 +173,7 @@ function hu_ep_ih_settings_page(){
 	}
 }
 
-function hu_ep_ih_read_glyphs($svgFile){
+function hu_ep_ih_read_glyphs( $svgFile ){
 	$svgContent = file_get_contents($svgFile);
 	$xmlInit = simplexml_load_string($svgContent);
 	$svgJson = json_encode($xmlInit);
@@ -250,8 +250,24 @@ function hu_ep_ih_add_settings_to_hu_framework($options = array()){
 		'id'      => 'hu_ep_ih_css_file_url',
 		'type'    => 'text_url',
 		'default' => get_theme_file_uri(),
+		'after_field' => 'hu_ep_ih_css_file_url_validation'
 	);
 	return $options;
+}
+
+function hu_ep_ih_css_file_url_validation() {
+	$url = hu_ep_ih_get_css_file_url();
+	if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
+		echo '<label style="color: #f00">'.__('Ungültige URL!', 'huishu-essentials-iconfont-helper').'</label>';
+		return;
+	}
+
+	$filename = basename($url);
+	$extension = strtolower(substr($filename, strrpos($filename, '.') + 1));
+	if ( $extension != 'css' ) {
+		echo '<label style="color: #f00">'.__('Falsche Dateiendung', 'huishu-essentials-iconfont-helper').'</label>';
+		return;
+	}
 }
 
 /**
